@@ -251,7 +251,7 @@
         NSAssert(NO, @"警告 - interface即将被覆盖, 请检查是否添加了相同的taskIdentifier!!!");
     }
 #endif
-    [self.interfaceRecord setObject:interface forKey:taskIdentifier];
+    [self.interfaceRecord setValue:interface forKey:taskIdentifier];
     [self unLock];
 }
 

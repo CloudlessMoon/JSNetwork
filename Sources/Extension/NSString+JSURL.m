@@ -59,7 +59,7 @@
         }
         NSURLComponents *components = fullUrl.js_URLComponents;
         [components.queryItems enumerateObjectsUsingBlock:^(NSURLQueryItem *queryItem, NSUInteger idx, BOOL *stop) {
-            [dict setObject:queryItem.value ? : @"" forKey:queryItem.name];
+            [dict setValue:queryItem.value ? : @"" forKey:queryItem.name];
         }];
     }
     return dict.copy;
