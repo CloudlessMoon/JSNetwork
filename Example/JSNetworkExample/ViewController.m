@@ -58,7 +58,6 @@
     void (^test)(void) = ^(void) {
         CNodeAPI *api = [[CNodeAPI alloc] init];
         /// 生成接口
-        __weak __typeof(self) weakSelf = self;
         [JSNetworkProvider requestWithConfig:api
                                     onTarget:self
                                    completed:^(ViewController *_Nullable target, id<JSNetworkInterfaceProtocol> aInterface) {
@@ -67,12 +66,11 @@
         }];
     };
     /// 测试
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        test();
-    });
-    dispatch_async(dispatch_get_global_queue(0, 0), ^{
-        test();
-    });
+    for (int i = 0; i < 5; i++) {
+        dispatch_async(dispatch_get_global_queue(0, 0), ^{
+            test();
+        });
+    }
 }
 
 - (IBAction)onPressBatch:(id)sender {

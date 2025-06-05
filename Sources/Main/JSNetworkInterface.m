@@ -16,20 +16,25 @@
 #import "JSNetworkProxy.h"
 #import "JSNetworkRequestProtocol.h"
 
-FOUNDATION_STATIC_INLINE dispatch_queue_t
-JSNetworkTaskIdentifierQueue(void) {
+FOUNDATION_STATIC_INLINE
+NSUInteger JSNetworkAtomicInt(void) {
+    static NSUInteger current = 1;
     static dispatch_queue_t queue;
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        queue = dispatch_queue_create("com.jsnetwork.task.identifier.queue", DISPATCH_QUEUE_SERIAL);
+        queue = dispatch_queue_create("com.jsnetwork.atomic-int", DISPATCH_QUEUE_SERIAL);
     });
-    return queue;
+    __block NSUInteger value;
+    dispatch_sync(queue, ^{
+        value = current;
+        current = value + 1;
+    });
+    return value;
 }
 
 @interface JSNetworkInterface () {
     id<JSNetworkRequestConfigProtocol> _config;
     NSMutableArray<JSNetworkRequestCompletedBlock> *_completionBlocks;
-    NSString *_taskIdentifier;
 }
 
 @end
@@ -42,6 +47,7 @@ JSNetworkTaskIdentifierQueue(void) {
 @synthesize uploadProgress = _uploadProgress;
 @synthesize downloadProgress = _downloadProgress;
 @synthesize completionBlocks = _completionBlocks;
+@synthesize taskIdentifier = _taskIdentifier;
 
 - (instancetype)initWithRequestConfig:(id<JSNetworkRequestConfigProtocol>)config
                        uploadProgress:(nullable JSNetworkProgressBlock)uploadProgress
@@ -83,16 +89,13 @@ JSNetworkTaskIdentifierQueue(void) {
         
         /// 回调函数
         _completionBlocks = [NSMutableArray array];
+        
         [self requestUploadProgress:uploadProgress];
         [self requestDownloadProgress:downloadProgress];
         [self requestCompletedBlock:completionBlock];
         
         /// 生成任务ID
-        static NSUInteger jsNetworkRequestTaskIdentifier = 0;
-        dispatch_sync(JSNetworkTaskIdentifierQueue(), ^{
-            jsNetworkRequestTaskIdentifier = jsNetworkRequestTaskIdentifier + 1;
-            _taskIdentifier = [NSString stringWithFormat:@"%@_%@", @"task", @(jsNetworkRequestTaskIdentifier)];
-        });
+        _taskIdentifier = [NSString stringWithFormat:@"%@_%@", @"task", @(JSNetworkAtomicInt())];
     }
     return self;
 }
@@ -117,14 +120,6 @@ JSNetworkTaskIdentifierQueue(void) {
     _downloadProgress = nil;
 }
 
-- (NSString *)taskIdentifier {
-    __block NSString *taskIdentifier;
-    dispatch_sync(JSNetworkTaskIdentifierQueue(), ^{
-        taskIdentifier = _taskIdentifier;
-    });
-    return taskIdentifier;
-}
-
 - (NSString *)description {
 #ifdef DEBUG
     NSDictionary *config = [NSJSONSerialization JSONObjectWithData:[JSNetworkUtil dataFromObject:self.processedConfig.description] options:NSJSONReadingMutableContainers error:nil];
@@ -136,7 +131,7 @@ JSNetworkTaskIdentifierQueue(void) {
         },
     };
     NSDictionary *result = [NSDictionary dictionaryWithObject:value forKey:[super description]];
-    NSData *resultData = [NSJSONSerialization dataWithJSONObject:result options:NSJSONWritingPrettyPrinted error:nil];
+    NSData *resultData = [NSJSONSerialization dataWithJSONObject:result options:0 error:nil];
     NSString *resultString = [[NSString alloc] initWithData:resultData encoding:NSUTF8StringEncoding];
     resultString = [resultString stringByReplacingOccurrencesOfString:@"\\/" withString:@"/"];
     return resultString;

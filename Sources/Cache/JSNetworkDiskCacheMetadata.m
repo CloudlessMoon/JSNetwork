@@ -9,7 +9,6 @@
 #import "JSNetworkUtil.h"
 
 @implementation JSNetworkDiskCacheMetadata
-
 @synthesize appVersionString = _appVersionString;
 @synthesize cacheData = _cacheData;
 @synthesize creationDate = _creationDate;

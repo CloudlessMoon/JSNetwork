@@ -12,7 +12,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JSNetworkDiskCacheMetadata : NSObject <JSNetworkDiskCacheMetadataProtocol>
 
-
 @end
 
 NS_ASSUME_NONNULL_END

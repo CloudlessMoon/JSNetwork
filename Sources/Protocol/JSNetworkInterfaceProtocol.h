@@ -50,6 +50,10 @@ typedef void(^JSNetworkRequestCompletedBlock)(id<JSNetworkInterfaceProtocol> aIn
  *  @brief 返回已经完成的回调
  */
 @property (nonatomic, copy, readonly) NSArray<JSNetworkRequestCompletedBlock> *completionBlocks;
+/**
+ *  @brief 任务ID, 保证唯一
+ */
+@property (nonatomic, copy, readonly) NSString *taskIdentifier;
 
 /**
  *  @brief 根据config初始化一个Interface
@@ -96,13 +100,6 @@ typedef void(^JSNetworkRequestCompletedBlock)(id<JSNetworkInterfaceProtocol> aIn
  *  @brief 清空所有回调
  */
 - (void)clearAllCallBack;
-
-/**
- *  @brief 任务ID, 保证唯一, 注意线程安全
- *
- * @return NSString
- */
-- (NSString *)taskIdentifier;
 
 @end
 
