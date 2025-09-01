@@ -88,6 +88,8 @@ NS_ASSUME_NONNULL_BEGIN
                                             downloadProgress:(nullable void (^)(NSProgress *downloadProgress))downloadProgress
                                                    completed:(nullable void (^)(__kindof NSObject *_Nullable target, id<JSNetworkInterfaceProtocol> aInterface))completed NS_SWIFT_NAME(request(config:onTarget:uploadProgress:downloadProgress:completed:));
 
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
 
 @end
 
