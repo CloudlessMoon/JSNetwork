@@ -69,6 +69,9 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (instancetype)sharedConfig;
 
+- (instancetype)init NS_UNAVAILABLE;
++ (instancetype)new NS_UNAVAILABLE;
+
 /**
  *  @brief 添加一个用于URL全局参数的字典
  *
