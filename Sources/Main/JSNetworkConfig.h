@@ -11,7 +11,6 @@
 @protocol JSNetworkPluginProtocol;
 @protocol JSNetworkResponseProtocol;
 @protocol JSNetworkRequestProtocol;
-@protocol JSNetworkDiskCacheProtocol;
 @protocol JSNetworkInterfaceProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
@@ -49,7 +48,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  @brief 最大并发数, 默认是-1, 也即不限制
  *
- *  @note  仅支持request网络任务, 不支持cache任务
+ *  @note  仅支持request网络任务
  */
 @property (nonatomic, assign) NSInteger requestMaxConcurrentCount;
 /**
@@ -60,14 +59,6 @@ NS_ASSUME_NONNULL_BEGIN
  *  @brief 全局的响应类
  */
 @property (nullable, nonatomic, copy) id<JSNetworkResponseProtocol>(^buildNetworkResponse)(id<JSNetworkInterfaceProtocol> interface);
-/**
- *  @brief 磁盘缓存的类
- */
-@property (nullable, nonatomic, copy) id<JSNetworkDiskCacheProtocol>(^buildNetworkDiskCache)(id<JSNetworkInterfaceProtocol> interface);
-/**
- *  @brief 磁盘缓存的文件夹路径
- */
-@property (nonatomic, copy) NSString *cacheDirectoryPath;
 /**
  *  @brief 全局的插件
  */

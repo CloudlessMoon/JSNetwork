@@ -38,9 +38,6 @@
         JSNetworkConfig.sharedConfig.buildNetworkResponse = ^id<JSNetworkResponseProtocol>(id<JSNetworkInterfaceProtocol> interface) {
             return [[NetworkResponse alloc] init];
         };
-        JSNetworkConfig.sharedConfig.buildNetworkDiskCache = ^id<JSNetworkDiskCacheProtocol>(id<JSNetworkInterfaceProtocol> interface) {
-            return [[JSNetworkDiskCache alloc] init];
-        };
         [JSNetworkConfig.sharedConfig addURLParameters:@{@"app": @"1.0.0", @"token": @"token"}];
         [JSNetworkConfig.sharedConfig addURLParameters:@{@"other": @"other"}];
         [JSNetworkConfig.sharedConfig addHTTPHeaderFields:@{@"userName": @"123"}];

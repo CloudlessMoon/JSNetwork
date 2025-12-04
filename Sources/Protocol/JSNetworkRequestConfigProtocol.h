@@ -11,7 +11,6 @@
 @protocol JSNetworkPluginProtocol;
 @protocol JSNetworkRequestProtocol;
 @protocol JSNetworkResponseProtocol;
-@protocol JSNetworkDiskCacheProtocol;
 
 typedef NS_ENUM(NSInteger, JSRequestMethod) {
     JSRequestMethodGET     NS_SWIFT_NAME(get),
@@ -27,11 +26,6 @@ typedef NS_ENUM(NSInteger, JSRequestSerializerType) {
     JSRequestSerializerTypeHTTP        NS_SWIFT_NAME(http),         /// POST时Body转换为自定义的字符串传输
     JSRequestSerializerTypeFormData    NS_SWIFT_NAME(formData),     /// POST时Body转换为FormData传输
     JSRequestSerializerTypeBinaryData  NS_SWIFT_NAME(binaryData),   /// POST时Body转换为二进制数据传输
-};
-
-typedef NS_ENUM(NSInteger, JSRequestCachePolicy) {
-    JSRequestCachePolicyIgnoringCacheData = 0,      /// 忽略本地缓存, 直接从后台请求数据
-    JSRequestCachePolicyUseCacheDataElseLoad = 1,   /// 若缓存存在则使用缓存, 否则从后台请求数据
 };
 
 typedef NS_ENUM(NSInteger, JSResponseSerializerType) {
@@ -94,6 +88,11 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSTimeInterval)requestTimeoutInterval;
 
 /**
+ *  @brief 缓存策略
+ */
+- (NSURLRequestCachePolicy)requestCachePolicy;
+
+/**
  *  @brief 请求头, 默认是全局设置的请求头, 注意：会拼接上全局的设置
  */
 - (nullable NSDictionary<NSString *, NSString *> *)requestHeaderFieldValueDictionary;
@@ -147,49 +146,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (id<JSNetworkResponseProtocol>)response;
 
 /**
- *  @brief 磁盘缓存类, 默认全局设置的diskCache
- */
-- (id<JSNetworkDiskCacheProtocol>)diskCache;
-
-/**
  *  @brief 插件, 默认全局设置的Plugins, 注意：会拼接上全局的设置
  */
 - (NSArray<id<JSNetworkPluginProtocol>> *)requestPlugins;
-
-/**
- *  @brief 缓存策略, 注意并不是<NSURLRequestCachePolicy>
- *
- *  @use 当设置JSRequestCachePolicyUseCacheDataElseLoad时, 则必须设置cacheVersion或者cacheTimeInSeconds
- */
-- (JSRequestCachePolicy)cachePolicy;
-
-/**
- *  @brief 缓存版本, 默认是-1
- */
-- (long long)cacheVersion;
-
-/**
- *  @brief 缓存时间, 默认是-1
- */
-- (NSInteger)cacheTimeInSeconds;
-
-/**
- *  @brief 根据响应最后一次询问是否保存缓存, 默认true
- *
- *  @param response 响应
- */
-- (BOOL)cacheIsSavedWithResponse:(id<JSNetworkResponseProtocol>)response NS_SWIFT_NAME(cacheIsSaved(response:));
-
-/**
- *  @brief 缓存的文件名
- */
-- (NSString *)cacheFileName;
-
-/**
- *  @brief 缓存的文件夹路径
- */
-- (NSString *)cacheDirectoryPath;
-
 
 @end
 

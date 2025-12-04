@@ -12,7 +12,6 @@
 @protocol JSNetworkRequestConfigProtocol;
 @protocol JSNetworkResponseProtocol;
 @protocol JSNetworkRequestProtocol;
-@protocol JSNetworkDiskCacheProtocol;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -34,10 +33,6 @@ typedef void(^JSNetworkRequestCompletedBlock)(id<JSNetworkInterfaceProtocol> aIn
  *  @brief 响应类
  */
 @property (nonatomic, strong, readonly) id<JSNetworkResponseProtocol> response;
-/**
- *  @brief 缓存类的实例
- */
-@property (nullable, nonatomic, strong, readonly) id<JSNetworkDiskCacheProtocol> diskCache;
 /**
  *  @brief 上传进度的回调
  */

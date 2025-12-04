@@ -28,16 +28,8 @@
     return @[@"other"];
 }
 
-- (JSRequestCachePolicy)cachePolicy {
-    return JSRequestCachePolicyIgnoringCacheData;
-}
-
-- (long long)cacheVersion {
-    return 1;
-}
-
-- (BOOL)cacheIsSavedWithResponse:(id<JSNetworkResponseProtocol>)response {
-    return [(NetworkResponse *)response successful];
+- (NSURLRequestCachePolicy)requestCachePolicy {
+    return NSURLRequestReloadIgnoringCacheData;
 }
 
 @end

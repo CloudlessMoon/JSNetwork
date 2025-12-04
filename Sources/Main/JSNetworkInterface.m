@@ -43,7 +43,6 @@ NSUInteger JSNetworkAtomicInt(void) {
 @synthesize processedConfig = _processedConfig;
 @synthesize response = _response;
 @synthesize request = _request;
-@synthesize diskCache = _diskCache;
 @synthesize uploadProgress = _uploadProgress;
 @synthesize downloadProgress = _downloadProgress;
 @synthesize completionBlocks = _completionBlocks;
@@ -76,16 +75,6 @@ NSUInteger JSNetworkAtomicInt(void) {
             _response = sharedConfig.buildNetworkResponse(self);
         }
         NSAssert(_response, @"请设置response");
-        
-        /// 磁盘缓存的实例
-        if (_processedConfig.cachePolicy == JSRequestCachePolicyUseCacheDataElseLoad) {
-            if ([config respondsToSelector:@selector(diskCache)]) {
-                _diskCache = config.diskCache;
-            } else if (sharedConfig.buildNetworkDiskCache) {
-                _diskCache = sharedConfig.buildNetworkDiskCache(self);
-            }
-            NSAssert(_diskCache, @"请设置diskCache");
-        }
         
         /// 回调函数
         _completionBlocks = [NSMutableArray array];
@@ -122,7 +111,7 @@ NSUInteger JSNetworkAtomicInt(void) {
 
 - (NSString *)description {
 #ifdef DEBUG
-    NSDictionary *config = [NSJSONSerialization JSONObjectWithData:[JSNetworkUtil dataFromObject:self.processedConfig.description] options:NSJSONReadingMutableContainers error:nil];
+    NSDictionary *config = [NSJSONSerialization JSONObjectWithData:[JSNetworkUtil dataFromObject:self.processedConfig.description] options:0 error:nil];
     NSDictionary *value = @{
         @"request": [config isKindOfClass:NSDictionary.class] ? config : @{},
         @"response": @{

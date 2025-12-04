@@ -41,16 +41,4 @@
     return JSResponseSerializerTypeHTTP;
 }
 
-- (JSRequestCachePolicy)cachePolicy {
-    return JSRequestCachePolicyIgnoringCacheData;
-}
-
-- (long long)cacheVersion {
-    return 1;
-}
-
-- (BOOL)cacheIsSavedWithResponse:(id<JSNetworkResponseProtocol>)response {
-    return [(NetworkResponse *)response successful];
-}
-
 @end

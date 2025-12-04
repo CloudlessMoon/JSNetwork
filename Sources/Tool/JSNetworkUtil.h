@@ -14,13 +14,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 @end
 
-@interface JSNetworkUtil (Cache)
+@interface JSNetworkUtil (Data)
 
 + (nullable NSData *)dataFromObject:(id)object;
-+ (NSString *)md5StringFromString:(NSString *)string;
-+ (NSString *)appVersionString;
-+ (long long)fileSizeAtPath:(NSString *)filePath;
-+ (long long)directorySizeAtPath:(NSString *)directoryPath;
 
 @end
 

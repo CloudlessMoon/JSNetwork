@@ -11,9 +11,7 @@
 #import "JSNetworkResponseProtocol.h"
 #import "JSNetworkPluginProtocol.h"
 #import "JSNetworkRequestProtocol.h"
-#import "JSNetworkDiskCacheProtocol.h"
 #import "JSNetworkInterfaceProtocol.h"
-#import "JSNetworkDiskCacheMetadataProtocol.h"
 #import "JSNetworkUtil.h"
 #import "JSNetworkConfig.h"
 #import <os/lock.h>
@@ -57,11 +55,7 @@
     [self performInterface:interface forTaskIdentifier:interface.taskIdentifier];
     /// 处理请求
     [self toggleWillStartWithInterface:interface];
-    if (interface.processedConfig.cachePolicy == JSRequestCachePolicyUseCacheDataElseLoad) {
-        [self processingDiskCacheForInterface:interface];
-    } else {
-        [self processingRequestForInterface:interface];
-    }
+    [self processingRequestForInterface:interface];
     [self toggleDidStartWithInterface:interface];
 }
 
@@ -132,32 +126,7 @@
         @autoreleasepool {
             [weakSelf processingResponseForInterface:weakInterface
                                   withResponseObject:responseObject
-                                setCacheDataIfNeeded:YES
                                                error:error];
-        }
-    }];
-}
-
-/// 处理缓存
-- (void)processingDiskCacheForInterface:(id<JSNetworkInterfaceProtocol>)interface {
-    id<JSNetworkRequestConfigProtocol> processedConfig = interface.processedConfig;
-    NSParameterAssert(processedConfig.cacheTimeInSeconds > 0 || processedConfig.cacheVersion > 0);
-    __weak typeof(self) weakSelf = self;
-    __weak typeof(interface) weakInterface = interface;
-    /// 缓存处理
-    [interface.diskCache buildTaskWithConfig:processedConfig
-                                didCompleted:^(id<JSNetworkDiskCacheMetadataProtocol> metadata) {
-        @autoreleasepool {
-            if (metadata) {
-                /// 存在缓存时
-                [weakSelf processingResponseForInterface:weakInterface
-                                      withResponseObject:metadata.cacheData
-                                    setCacheDataIfNeeded:NO
-                                                   error:nil];
-            } else {
-                /// 处理网络请求
-                [weakSelf processingRequestForInterface:weakInterface];
-            }
         }
     }];
 }
@@ -165,7 +134,6 @@
 /// 处理响应
 - (void)processingResponseForInterface:(id<JSNetworkInterfaceProtocol>)interface
                     withResponseObject:(nullable id)responseObject
-                  setCacheDataIfNeeded:(BOOL)setCacheDataIfNeeded
                                  error:(nullable NSError *)error {
     NSParameterAssert(interface);
     __weak typeof(self) weakSelf = self;
@@ -179,37 +147,20 @@
                                     responseObject:responseObject
                                              error:error];
         }
-        void(^completionBlock)(void) = ^(void) {
-            dispatch_async(completionQueue, ^{
-                @autoreleasepool {
-                    [weakSelf toggleWillStopWithInterface:weakInterface];
-                    for (JSNetworkRequestCompletedBlock block in weakInterface.completionBlocks) {
-                        block(weakInterface);
-                    }
-                    [weakInterface clearAllCallBack];
-                    [weakSelf toggleDidStopWithInterface:weakInterface];
-                    if (weakInterface.request.requestTask) {
-                        [weakSelf removeRequestOperation:weakInterface.request];
-                    }
-                    [weakSelf removeInterfaceForTaskIdentifier:weakInterface.taskIdentifier];
+        dispatch_async(completionQueue, ^{
+            @autoreleasepool {
+                [weakSelf toggleWillStopWithInterface:weakInterface];
+                for (JSNetworkRequestCompletedBlock block in weakInterface.completionBlocks) {
+                    block(weakInterface);
                 }
-            });
-        };
-        id<JSNetworkRequestConfigProtocol> processedConfig = weakInterface.processedConfig;
-        BOOL isSaveCache = NO;
-        if (setCacheDataIfNeeded && processedConfig.cachePolicy == JSRequestCachePolicyUseCacheDataElseLoad && !error) {
-            isSaveCache = [processedConfig cacheIsSavedWithResponse:weakInterface.response];
-        }
-        if (isSaveCache) {
-            /// 设置缓存
-            [weakInterface.diskCache setCacheData:responseObject
-                                 forRequestConfig:processedConfig
-                                        completed:^(id<JSNetworkDiskCacheMetadataProtocol> metadata) {
-                completionBlock();
-            }];
-        } else {
-            completionBlock();
-        }
+                [weakInterface clearAllCallBack];
+                [weakSelf toggleDidStopWithInterface:weakInterface];
+                if (weakInterface.request.requestTask) {
+                    [weakSelf removeRequestOperation:weakInterface.request];
+                }
+                [weakSelf removeInterfaceForTaskIdentifier:weakInterface.taskIdentifier];
+            }
+        });
     });
 }
 

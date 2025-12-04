@@ -65,6 +65,8 @@
             break;
     }
     requestSerializer.timeoutInterval = config.requestTimeoutInterval;
+    requestSerializer.cachePolicy = config.requestCachePolicy;
+    
     NSDictionary *headers = config.requestHeaderFieldValueDictionary;
     for (NSString *headerField in headers.keyEnumerator) {
         [requestSerializer setValue:headers[headerField] forHTTPHeaderField:headerField];
@@ -108,7 +110,7 @@
     }
     if (!request) {
         request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:config.requestURLString]
-                                          cachePolicy:NSURLRequestUseProtocolCachePolicy
+                                          cachePolicy:config.requestCachePolicy
                                       timeoutInterval:config.requestTimeoutInterval];
     }
     /// URLRequest创建完成时需要调用

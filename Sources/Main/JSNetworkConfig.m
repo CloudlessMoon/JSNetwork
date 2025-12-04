@@ -41,8 +41,6 @@
         _requestMaxConcurrentCount = -1;
         _processingQueue = dispatch_queue_create("com.jsnetwork.agent.processing", DISPATCH_QUEUE_CONCURRENT);
         _completionQueue = dispatch_queue_create("com.jsnetwork.agent.completion", DISPATCH_QUEUE_CONCURRENT);
-        NSArray<NSString *> *cachePaths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
-        _cacheDirectoryPath = [NSString stringWithFormat:@"%@/com.jsnetwork.cache", cachePaths.firstObject];
     }
     return self;
 }

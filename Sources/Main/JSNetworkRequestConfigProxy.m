@@ -18,7 +18,6 @@
 @property (nonatomic, copy) NSDictionary<NSString *, NSString *> *finalParameters;
 @property (nonatomic, copy) NSDictionary<NSString *, NSString *> *finalHTTPHeaderFields;
 @property (nonatomic, copy) NSArray<id<JSNetworkPluginProtocol>> *finalPlugins;
-@property (nonatomic, copy) NSString *finalCacheFileName;
 
 @end
 
@@ -65,15 +64,6 @@
             [plugins addObjectsFromArray:config.requestPlugins];
         }
         _finalPlugins = plugins;
-        if ([config respondsToSelector:@selector(cachePolicy)] && config.cachePolicy == JSRequestCachePolicyUseCacheDataElseLoad) {
-            /// 缓存的文件名
-            if ([config respondsToSelector:@selector(cacheFileName)]) {
-                _finalCacheFileName = config.cacheFileName;
-            } else {
-                NSString *requestInfo = [NSString stringWithFormat:@"Url:%@ Method:%@", _finalURL, @(self.requestMethod)];
-                _finalCacheFileName = [JSNetworkUtil md5StringFromString:requestInfo];
-            }
-        }
     }
     return self;
 }
@@ -132,28 +122,8 @@
     return _finalPlugins;
 }
 
-- (JSRequestCachePolicy)cachePolicy {
-    return JSRequestCachePolicyIgnoringCacheData;
-}
-
-- (long long)cacheVersion {
-    return -1;
-}
-
-- (NSInteger)cacheTimeInSeconds {
-    return -1;
-}
-
-- (BOOL)cacheIsSavedWithResponse:(id<JSNetworkResponseProtocol>)response {
-    return YES;
-}
-
-- (NSString *)cacheFileName {
-    return _finalCacheFileName;
-}
-
-- (NSString *)cacheDirectoryPath {
-    return JSNetworkConfig.sharedConfig.cacheDirectoryPath;
+- (NSURLRequestCachePolicy)requestCachePolicy {
+    return NSURLRequestUseProtocolCachePolicy;
 }
 
 @end
@@ -171,11 +141,12 @@
     self = [super initWithTarget:target];
     if (self) {
         _privateConfig = [[_JSNetworkRequestConfigPrivate alloc] initWithConfig:target];
-        _ignoreForwardingSelectors = @[NSStringFromSelector(@selector(requestURLString)),
-                                       NSStringFromSelector(@selector(requestParameters)),
-                                       NSStringFromSelector(@selector(requestHeaderFieldValueDictionary)),
-                                       NSStringFromSelector(@selector(requestPlugins)),
-                                       NSStringFromSelector(@selector(cacheFileName))];
+        _ignoreForwardingSelectors = @[
+            NSStringFromSelector(@selector(requestURLString)),
+            NSStringFromSelector(@selector(requestParameters)),
+            NSStringFromSelector(@selector(requestHeaderFieldValueDictionary)),
+            NSStringFromSelector(@selector(requestPlugins))
+        ];
     }
     return self;
 }
@@ -208,14 +179,12 @@
 
 - (NSString *)description {
 #ifdef DEBUG
-    JSRequestCachePolicy cachePolicy = (JSRequestCachePolicy)[self performSelector:@selector(cachePolicy)];
     NSDictionary *value = @{
         @"url": [self performSelector:@selector(requestURLString)] ? : @"",
         @"header": [self performSelector:@selector(requestHeaderFieldValueDictionary)] ? : @"",
         @"parameters": [self performSelector:@selector(requestParameters)] ? : @"",
         @"body": [self performSelector:@selector(requestBody)] ? : @"",
         @"method": @((JSRequestMethod)[self performSelector:@selector(requestMethod)]),
-        @"cacheFilePath": cachePolicy == JSRequestCachePolicyUseCacheDataElseLoad ? [NSString stringWithFormat:@"%@/%@.metadata", [self performSelector:@selector(cacheDirectoryPath)], [self performSelector:@selector(cacheFileName)]] : @""
     };
     NSDictionary *result = [NSDictionary dictionaryWithObject:value forKey:[super description]];
     NSData *resultData = [NSJSONSerialization dataWithJSONObject:result options:NSJSONWritingPrettyPrinted error:nil];
