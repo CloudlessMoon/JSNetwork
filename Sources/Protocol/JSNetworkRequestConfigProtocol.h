@@ -65,7 +65,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  @brief 需要忽略的全局设置的参数
  */
-- (nullable NSArray<NSString *> *)ignoreGlobalParameterForKeys;
+- (nullable NSSet<NSString *> *)ignoreGlobalParameterForKeys;
 
 /**
  *  @brief request中的HTTPBody

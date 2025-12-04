@@ -29,8 +29,8 @@
         NSDictionary<NSString *, id> *URLParameters = JSNetworkConfig.sharedConfig.URLParameters ? : @{};
         NSMutableDictionary<NSString *, id> *parameters = [NSMutableDictionary dictionaryWithDictionary:URLParameters];
         if ([config respondsToSelector:@selector(ignoreGlobalParameterForKeys)]) {
-            NSArray *allKeys = parameters.allKeys;
-            [config.ignoreGlobalParameterForKeys enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {
+            NSSet<NSString *> *allKeys = [NSSet setWithArray:parameters.allKeys ? : @[]];
+            [config.ignoreGlobalParameterForKeys enumerateObjectsUsingBlock:^(NSString *key, BOOL *stop) {
                 if ([allKeys containsObject:key]) {
                     [parameters removeObjectForKey:key];
                 }
