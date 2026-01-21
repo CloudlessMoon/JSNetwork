@@ -198,7 +198,7 @@
     NSParameterAssert(interface && taskIdentifier);
     [self addLock];
 #ifdef DEBUG
-    if ([self.interfaceRecord.allKeys containsObject:taskIdentifier]) {
+    if ([self.interfaceRecord objectForKey:taskIdentifier] != nil) {
         NSAssert(NO, @"警告 - interface即将被覆盖, 请检查是否添加了相同的taskIdentifier!!!");
     }
 #endif
