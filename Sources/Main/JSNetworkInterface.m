@@ -15,20 +15,18 @@
 #import "JSNetworkRequestConfigProxy.h"
 #import "JSNetworkProxy.h"
 #import "JSNetworkRequestProtocol.h"
+#import <os/lock.h>
 
 FOUNDATION_STATIC_INLINE
 NSUInteger JSNetworkAtomicInt(void) {
     static NSUInteger current = 1;
-    static dispatch_queue_t queue;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        queue = dispatch_queue_create("com.jsnetwork.atomic-int", DISPATCH_QUEUE_SERIAL);
-    });
-    __block NSUInteger value;
-    dispatch_sync(queue, ^{
-        value = current;
-        current = value + 1;
-    });
+    static os_unfair_lock lock = OS_UNFAIR_LOCK_INIT;
+    
+    NSUInteger value;
+    os_unfair_lock_lock(&lock);
+    value = current;
+    current = value + 1;
+    os_unfair_lock_unlock(&lock);
     return value;
 }
 
