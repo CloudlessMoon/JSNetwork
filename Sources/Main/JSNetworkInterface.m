@@ -22,9 +22,8 @@ NSUInteger JSNetworkAtomicInt(void) {
     static NSUInteger current = 1;
     static os_unfair_lock lock = OS_UNFAIR_LOCK_INIT;
     
-    NSUInteger value;
     os_unfair_lock_lock(&lock);
-    value = current;
+    NSUInteger value = current;
     current = value + 1;
     os_unfair_lock_unlock(&lock);
     return value;
