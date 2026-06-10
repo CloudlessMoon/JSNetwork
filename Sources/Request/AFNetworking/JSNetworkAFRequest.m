@@ -54,8 +54,22 @@
             requestSerializer = [AFJSONRequestSerializer serializer];
             break;
         case JSRequestSerializerTypeHTTP:
+            requestSerializer = [AFHTTPRequestSerializer serializer];
+            [requestSerializer setQueryStringSerializationWithBlock:^NSString * _Nullable(NSURLRequest *request, id parameters, NSError *__autoreleasing _Nullable * _Nullable error) {
+                if ([parameters isKindOfClass:NSString.class]) {
+                    return parameters;
+                } else {
+                    NSCAssert(NO, @"必须为string");
+                    return nil;
+                }
+            }];
+            break;
         case JSRequestSerializerTypeBinaryData:
             requestSerializer = [AFHTTPRequestSerializer serializer];
+            [requestSerializer setQueryStringSerializationWithBlock:^NSString * _Nullable(NSURLRequest *request, id parameters, NSError *__autoreleasing _Nullable * _Nullable error) {
+                NSCAssert([parameters isKindOfClass:NSData.class], @"必须为data");
+                return nil;
+            }];
             break;
         case JSRequestSerializerTypeFormData:
             useFormData = YES;
@@ -107,11 +121,18 @@
                                              URLString:[[NSURL URLWithString:config.requestURLString] absoluteString]
                                             parameters:requestBody
                                                  error:nil];
+        if (config.requestSerializerType == JSRequestSerializerTypeBinaryData && [requestBody isKindOfClass:NSData.class]) {
+            request.HTTPBody = requestBody;
+        }
     }
     if (!request) {
+        NSAssert(NO, @"未生成request，请检查代码");
         request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:config.requestURLString]
                                           cachePolicy:config.requestCachePolicy
                                       timeoutInterval:config.requestTimeoutInterval];
+        request.HTTPMethod = method;
+        request.HTTPBody = requestBody;
+        request.allHTTPHeaderFields = requestSerializer.HTTPRequestHeaders;
     }
     /// URLRequest创建完成时需要调用
     didCreateURLRequestBlock(request);
@@ -142,7 +163,7 @@
         [acceptableContentTypes unionSet:responseAcceptableContentTypes];
         responseSerializer.acceptableContentTypes = acceptableContentTypes.copy;
     }
-
+    
     /// 构建task
     if (config.requestSerializerType == JSRequestSerializerTypeFormData) {
         _requestTask = [self.sessionManager uploadTaskWithStreamedRequest:request

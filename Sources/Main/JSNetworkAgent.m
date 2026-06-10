@@ -108,15 +108,6 @@
             NSAssert(NO, @"必须为 NSMutableURLRequest类型");
             return;
         }
-        /// 二进制的数据
-        if (weakInterface.processedConfig.requestSerializerType == JSRequestSerializerTypeBinaryData) {
-            id body = weakInterface.processedConfig.requestBody;
-            if ([body isKindOfClass:NSData.class]) {
-                [urlRequest setHTTPBody:body];
-            } else {
-                NSAssert(NO, @"必须为 NSData类型");
-            }
-        }
         if ([weakInterface.processedConfig respondsToSelector:@selector(constructingMultipartURLRequest:)]) {
             [weakInterface.processedConfig constructingMultipartURLRequest:urlRequest];
         }
