@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/jiasongs/JSNetwork"
   s.author       = { "jiasong" => "593908937@qq.com" }
   s.platform     = :ios, "13.0"
-  s.swift_versions = ["5.1"]
+  s.swift_versions = ["5.9"]
   s.source       = { :git => "https://github.com/jiasongs/JSNetwork.git", :tag => "#{s.version}" }
   s.license      = "MIT"
   s.requires_arc = true
