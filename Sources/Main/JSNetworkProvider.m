@@ -50,10 +50,10 @@
 }
 
 - (NSMutableArray<JSNetworkProviderEntity *> *)jsnet_providerEntitys {
-    NSMutableArray *providerEntitys = objc_getAssociatedObject(self, _cmd);
+    NSMutableArray *providerEntitys = objc_getAssociatedObject(self, @selector(jsnet_providerEntitys));
     if (!providerEntitys) {
         providerEntitys = [NSMutableArray array];
-        objc_setAssociatedObject(self, _cmd, providerEntitys, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        objc_setAssociatedObject(self, @selector(jsnet_providerEntitys), providerEntitys, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
     }
     return providerEntitys;
 }
