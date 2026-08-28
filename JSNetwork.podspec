@@ -1,15 +1,15 @@
 
 Pod::Spec.new do |s|
-  s.name         = "JSNetwork"
-  s.version      = "1.0.0"
-  s.summary      = "离散式网络框架，面向协议编程，类似Swift的Moya"
-  s.homepage     = "https://github.com/jiasongs/JSNetwork"
-  s.author       = { "jiasong" => "593908937@qq.com" }
-  s.platform     = :ios, "13.0"
-  s.swift_versions = ["5.9"]
-  s.source       = { :git => "https://github.com/jiasongs/JSNetwork.git", :tag => "#{s.version}" }
-  s.license      = "MIT"
-  s.requires_arc = true
+  s.name             = "JSNetwork"
+  s.summary          = "离散式网络框架，面向协议编程，类似Swift的Moya"
+  s.homepage         = "https://github.com/jiasongs/JSNetwork"
+  s.license          = "MIT"
+  s.author           = { "jiasong" => "593908937@qq.com" }
+  s.source           = { :git => "https://github.com/jiasongs/JSNetwork.git", :tag => "#{s.version}" }
+  s.version          = '2.0.0'
+  s.platform         = :ios, '15.0'
+  s.swift_versions   = ['5.9']
+  s.requires_arc     = true
 
   s.default_subspec = "Core"
   s.subspec "Core" do |ss|
