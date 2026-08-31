@@ -11,7 +11,7 @@ Pod::Spec.new do |s|
   s.homepage         = "https://github.com/jiasongs/JSNetwork"
   s.license          = "MIT"
   s.author           = { "jiasong" => "593908937@qq.com" }
-  s.source           = { :git => "https://github.com/jiasongs/JSNetwork.git", :tag => "#{s.version}" }
+  s.source           = { :git => "https://github.com/jiasongs/JSNetwork.git", :tag => s.version.to_s }
 
   s.default_subspec = "Core"
   s.subspec "Core" do |ss|
