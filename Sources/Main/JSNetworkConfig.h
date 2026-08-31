@@ -24,11 +24,11 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  @brief 全局的任务处理所在的队列
  */
-@property (nonatomic) dispatch_queue_t processingQueue;
+@property (nonatomic, strong) dispatch_queue_t processingQueue;
 /**
  *  @brief 全局的回调处理所在的队列
  */
-@property (nonatomic) dispatch_queue_t completionQueue;
+@property (nonatomic, strong) dispatch_queue_t completionQueue;
 /**
  *  @brief 全局BaseURL
  */
