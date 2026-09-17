@@ -2,7 +2,7 @@
 Pod::Spec.new do |s|
   s.name = "JSNetwork"
   
-  s.version = "2.0.0"
+  s.version = "2.0.1"
   s.platforms = { :ios => "15.0" }
   s.swift_versions = ["5.9"]
   s.requires_arc = true
