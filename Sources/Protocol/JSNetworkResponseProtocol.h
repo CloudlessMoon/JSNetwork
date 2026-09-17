@@ -52,7 +52,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  @brief 原始的响应
  */
-- (nullable NSHTTPURLResponse *)originalResponse;
+- (nullable NSURLResponse *)originalResponse;
 
 /**
  *  @brief 网络连接是否异常

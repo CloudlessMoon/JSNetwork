@@ -33,11 +33,19 @@
 }
 
 - (nullable NSDictionary<NSString *, NSString *> *)responseHeaders {
-    return self.originalResponse.allHeaderFields;
+    NSURLResponse *originalResponse = self.originalResponse;
+    if ([originalResponse isKindOfClass:NSHTTPURLResponse.class]) {
+        return [(NSHTTPURLResponse *)originalResponse allHeaderFields];
+    }
+    return nil;
 }
 
 - (NSInteger)responseStatusCode {
-    return self.originalResponse.statusCode;
+    NSURLResponse *originalResponse = self.originalResponse;
+    if ([originalResponse isKindOfClass:NSHTTPURLResponse.class]) {
+        return [(NSHTTPURLResponse *)originalResponse statusCode];
+    }
+    return 0;
 }
 
 - (nullable id)responseObject {
@@ -48,12 +56,8 @@
     return _error;
 }
 
-- (nullable NSHTTPURLResponse *)originalResponse {
-    if ([_requestTask.response isKindOfClass:NSHTTPURLResponse.class]) {
-        return (NSHTTPURLResponse *)_requestTask.response;
-    } else {
-        return nil;
-    }
+- (nullable NSURLResponse *)originalResponse {
+    return _requestTask.response;
 }
 
 - (BOOL)networkingAbnormal {
